@@ -373,6 +373,21 @@ table.nm-oh td small { display: block; font-size: 10px; color: var(--faint); }
 .basis-note b { color: var(--ink); font: 700 15px var(--serif); }
 .basis-note em { font-style: normal; font-weight: 700; }
 
+/* 불용한자 */
+.bad-opt { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin-top: 14px; padding: 10px 14px;
+  background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px; }
+.bad-opt .check { white-space: normal; flex-wrap: wrap; }
+.bad-opt .check small { color: var(--faint); margin-left: 4px; font-weight: 400; }
+.bad-opt details summary { cursor: pointer; color: var(--accent); font-size: 13px; }
+.bad-list { margin-top: 8px; font-size: 12.5px; color: var(--sub); }
+.bad-list p { margin: 8px 0 4px; }
+.bad-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.bad-chips span { font: 600 16px var(--serif); color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; }
+.bad-chips.hard span { color: var(--fire); font-size: 14px; }
+.warn-bad { margin-top: 12px; padding: 8px 12px; border-radius: 10px; background: rgba(185, 67, 53, .08); border: 1px solid var(--fire);
+  color: var(--fire); font-size: 13px; }
+.warn-bad b { font: 700 15px var(--serif); }
+
 /* 질문 풀이 */
 #question { width: 100%; height: auto; min-height: 84px; resize: vertical; line-height: 1.6; font: inherit; color: var(--ink);
   background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }

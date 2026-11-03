@@ -126,6 +126,18 @@ function namePayload() {
   return { name_kr: kr || null, name_hanja: hanja.trim() ? hanja : null };
 }
 
+/* 불용한자 목록 (처음 펼칠 때 한 번만 불러옴) */
+$("#badListBox").addEventListener("toggle", async (e) => {
+  if (!e.target.open || $("#badList").dataset.done) return;
+  const bad = await (await fetch("data/bad_hanja.json")).json();
+  const chips = (arr) => arr.map((h) => `<span>${esc(h)}</span>`).join("");
+  $("#badList").innerHTML = `<p><b>전통 불용문자 ${bad.soft.length}자</b> — 체크하면 추천에서 뺍니다 (끄면 점수만 깎고 결과에 경고 표시)</p>
+    <div class="bad-chips">${chips(bad.soft)}</div>
+    <p><b>뜻이 좋지 않은 글자 ${bad.hard.length}자</b> — 항상 뺍니다 (뜻에 '죽을·병들·귀신' 등이 들어간 글자도 함께 제외)</p>
+    <div class="bad-chips hard">${chips(bad.hard)}</div>`;
+  $("#badList").dataset.done = "1";
+});
+
 /* 부모 사주 반영(선택): 날짜를 입력한 부모만 보냄 */
 $("#useParents").addEventListener("change", (e) => {
   if (e.target.checked && !$("#parentCols").children.length) {
@@ -522,7 +534,7 @@ function parStrip() {
 
 function renderNames(names, sur) {
   const head = secHead("推薦 姓名", `추천 이름 ${names.length}선`,
-    `<span>성씨 ${esc(sur.hanja)}(${esc(sur.kr)}) ${sur.strokes.join("+")}획</span><span>${lastData?.parents ? "기본 5항목 × 0.9 + 부모조화 10" : "자원오행 30 · 수리 30 · 발음 15 · 음양 10 · 한자 15"}</span>`);
+    `<span>성씨 ${esc(sur.hanja)}(${esc(sur.kr)}) ${sur.strokes.join("+")}획</span><span>${$("#softBad").checked ? "불용한자 제외" : "불용한자 포함(경고 표시)"}</span><span>${lastData?.parents ? "기본 5항목 × 0.9 + 부모조화 10" : "자원오행 30 · 수리 30 · 발음 15 · 음양 10 · 한자 15"}</span>`);
   if (!names.length) return `<section class="panel">${head}<p>조건에 맞는 이름이 없습니다. 한자 난이도를 넓히거나 돌림자 조건을 바꿔 보세요.</p></section>`;
   const top = names.slice(0, 3).map((n, i) => nameCard(n, i + 1, "feat")).join("");
   const par = parStrip();
@@ -557,7 +569,8 @@ function nameCard(n, rank, variant = "") {
       ${variant === "wide" ? `<span class="grade">${grade(n.score)}</span>` : ""}</div>${ring}</div>
     <div class="cl">${chars}</div>
     <div class="bars bd">${bd}</div>
-    <div class="cmt">${esc(n.comment)}</div>
+    ${n.bad_chars && n.bad_chars.length ? `<div class="warn-bad">⚠ 불용한자: ${n.bad_chars.map((x) => `<b>${esc(x.h)}</b> ${esc(x.kind)}`).join(", ")} — 이름에는 피하는 것이 좋습니다.</div>` : ""}
+    <div class="cmt">${esc(n.comment.replace(/ ※ 불용한자: .*$/, ""))}</div>
     <button class="btn-doc" type="button" data-doc="name" data-i="${variant === "wide" ? "eval" : rank - 1}">성명 감정서 보기 · 다운로드</button>`;
   if (variant === "wide") {
     return `<article class="nm wide"><div class="nm-main">${main}</div>

@@ -207,17 +207,24 @@ export class Namer {
       total = total * 0.9 + parPts;
     }
     total = pyRound(total, 1);
+    // 불용한자 표시: 전통 불용문자 / 뜻이 좋지 않은 글자
+    const badChars = [];
+    for (const c of givenChars) {
+      if (this.db.softBad.has(c.h)) badChars.push({ h: c.h, kind: "전통 불용문자" });
+      else if (this.db.isHardBad(c)) badChars.push({ h: c.h, kind: "뜻이 좋지 않은 글자" });
+    }
     return {
       hangul: this.surKr + givenKr,
       hanja: this.sur.map((c) => c.h).join("") + givenChars.map((c) => c.h).join(""),
-      given_kr: givenKr, score: total, breakdown, breakdown_full: full, parent_notes: parentNotes,
+      given_kr: givenKr, score: total, breakdown, breakdown_full: full, parent_notes: parentNotes, bad_chars: badChars,
       chars: [...this.sur.map((c) => [c, "성"]), ...givenChars.map((c, i) => [c, jw[i].role])]
         .map(([c, role]) => ({ h: c.h, r: c.r, m: c.m, won: c.won, pil: c.pil, jw: c.jw, grade: c.grade, role })),
       jawon: jw, suri: grids, suri_notes: suriNotes, eumyang: yy,
       sound: { syllables: sylls, ...flow },
       comment: this.comment(jw, grids, flow, yyPts) + (parentNotes.length
         ? " 부모 사주와의 조화: " + parentNotes.join(" / ") + "."
-        : (this.parents.length ? " 부모 사주에는 중립적인 한자입니다." : "")),
+        : (this.parents.length ? " 부모 사주에는 중립적인 한자입니다." : ""))
+        + (badChars.length ? " ※ 불용한자: " + badChars.map((x) => `${x.h}(${x.kind})`).join(", ") + " — 이름에는 피하는 것이 좋습니다." : ""),
     };
   }
   comment(jw, grids, flow, yyPts) {

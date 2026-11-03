@@ -12,7 +12,7 @@
 <meta name="description" content="운세복덕방 — 생년월일시로 사주를 세우고, 용신 오행·81수리·발음오행·음양을 따져 대법원 인명용 한자로 이름을 지어 드립니다.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=29">
+<link rel="stylesheet" href="style.css?v=30">
 </head>
 <body>
 <header class="top">
@@ -85,6 +85,11 @@
               <button type="button" data-v="M" class="on">남자</button><button type="button" data-v="F">여자</button>
             </div>
           </label>
+        </div>
+        <div class="bad-opt only-naming">
+          <label class="check"><input type="checkbox" id="softBad" checked>
+            <b>불용한자 제외</b><small>성명학에서 이름에 피하는 글자를 추천에서 뺍니다</small></label>
+          <details id="badListBox"><summary>불용한자 목록 보기</summary><div id="badList" class="bad-list"></div></details>
         </div>
         <div class="eval-only hide" id="evalInputs">
           <label>감정할 이름
@@ -174,7 +179,6 @@
           </label>
           <div class="checks">
             <label class="check"><input type="checkbox" id="eot"> 진태양시(균시차) 보정</label>
-            <label class="check only-naming"><input type="checkbox" id="softBad"> 전통 불용문자 제외</label>
             <label class="check only-naming"><input type="checkbox" id="single"> 외자 이름</label>
             <label class="check only-parents"><input type="checkbox" id="useParents"> 부모 사주 함께 반영 (아기 이름)</label>
           </div>
@@ -277,11 +281,11 @@
 </template>
 <script>
   // 계산 엔진(서버 없이 브라우저에서 동작): js/engine/api.js
-  window.engineReady = import("./js/engine/api.js?v=1");
+  window.engineReady = import("./js/engine/api.js?v=2");
 </script>
 <script src="config.js?v=4"></script>
 <script src="report.js?v=17"></script>
-<script src="app.js?v=28"></script>
+<script src="app.js?v=29"></script>
 <script src="duo.js?v=9"></script>
 <script src="donate.js?v=1"></script>
 </body>

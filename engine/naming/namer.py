@@ -194,6 +194,13 @@ class Namer:
             full["부모조화"] = 10
             total = total * 0.9 + par_pts
         total = round(total, 1)
+        # 불용한자 표시: 전통 불용문자 / 뜻이 좋지 않은 글자
+        bad_chars = []
+        for c in given_chars:
+            if c["h"] in self.db.soft_bad:
+                bad_chars.append({"h": c["h"], "kind": "전통 불용문자"})
+            elif self.db.is_hard_bad(c):
+                bad_chars.append({"h": c["h"], "kind": "뜻이 좋지 않은 글자"})
         return {
             "hangul": self.sur_kr + given_kr,
             "hanja": "".join(c["h"] for c in self.sur) + "".join(c["h"] for c in given_chars),
@@ -202,6 +209,7 @@ class Namer:
             "breakdown": breakdown,
             "breakdown_full": full,
             "parent_notes": parent_notes,
+            "bad_chars": bad_chars,
             "chars": [{"h": c["h"], "r": c["r"], "m": c["m"], "won": c["won"], "pil": c["pil"], "jw": c["jw"],
                        "grade": c["grade"], "role": role}
                       for c, role in [(c, "성") for c in self.sur] + [(c, x["role"]) for c, x in zip(given_chars, jw)]],
@@ -212,7 +220,9 @@ class Namer:
             "sound": {"syllables": sylls, **flow},
             "comment": self._comment(jw, grids, flow, yy_pts) + (
                 (" 부모 사주와의 조화: " + " / ".join(parent_notes) + ".") if parent_notes else
-                (" 부모 사주에는 중립적인 한자입니다." if self.parents else "")),
+                (" 부모 사주에는 중립적인 한자입니다." if self.parents else "")) + (
+                (" ※ 불용한자: " + ", ".join(f"{x['h']}({x['kind']})" for x in bad_chars) + " — 이름에는 피하는 것이 좋습니다.")
+                if bad_chars else ""),
         }
 
     def _comment(self, jw, grids, flow, yy_pts) -> str:
