@@ -251,10 +251,38 @@ function setStep(n) {
 }
 setStep(0);
 
+/* 하루 1회 제한 (이름 짓기 · 사주 풀이) — 서버가 없어 이 브라우저에 기록한다 */
+const QUOTA_MODES = { naming: "이름 짓기", saju: "사주 풀이" };
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* 저장 불가(시크릿 창 등) */ } },
+};
+const usedToday = (m) => (store.get(`unse.quota.${m}`) || {}).date === today();
+function showQuotaNote() {
+  const note = $("#quotaNote");
+  const used = QUOTA_MODES[mode] && usedToday(mode);
+  note.classList.toggle("hide", !used);
+  if (!used) return;
+  note.innerHTML = `<b>오늘의 ${QUOTA_MODES[mode]}를 이미 이용하셨습니다.</b> ${QUOTA_MODES[mode]}는 하루에 한 번 무료로 이용할 수 있어요. 내일 다시 찾아 주세요.
+    <button type="button" class="btn-doc" id="showLast">오늘 결과 다시 보기</button>`;
+  $("#showLast").onclick = () => {
+    const last = store.get(`unse.quota.${mode}`);
+    if (last && last.data) { render(last.data); setStep(4); $("#out").scrollIntoView({ behavior: "smooth", block: "start" }); }
+  };
+}
+$$(".tab").forEach((t) => t.addEventListener("click", showQuotaNote));
+showQuotaNote();
+
 $("#birthForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   $("#err").textContent = "";
   const out = $("#out");
+  if (QUOTA_MODES[mode] && usedToday(mode)) {
+    showQuotaNote();
+    $("#err").textContent = `${QUOTA_MODES[mode]}는 하루에 한 번만 이용할 수 있습니다. 내일 다시 이용해 주세요.`;
+    return;
+  }
   try {
     const birth = birthPayload();
     out.innerHTML = $("#tplLoading").innerHTML;
@@ -275,6 +303,7 @@ $("#birthForm").addEventListener("submit", async (e) => {
     }
     render(data);
     setStep(4);
+    if (QUOTA_MODES[mode]) { store.set(`unse.quota.${mode}`, { date: today(), data }); showQuotaNote(); }
     out.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
     out.innerHTML = "";

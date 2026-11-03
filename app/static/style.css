@@ -373,6 +373,12 @@ table.nm-oh td small { display: block; font-size: 10px; color: var(--faint); }
 .basis-note b { color: var(--ink); font: 700 15px var(--serif); }
 .basis-note em { font-style: normal; font-weight: 700; }
 
+/* 하루 1회 안내 */
+.quota-note { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--paper-2); border: 1px solid var(--gold);
+  font-size: 13.5px; color: var(--sub); text-align: center; }
+.quota-note b { display: block; color: var(--ink); font: 700 15px var(--serif); margin-bottom: 4px; }
+.quota-note .btn-doc { width: auto; padding: 0 18px; margin: 10px auto 0; display: flex; }
+
 /* 불용한자 */
 .bad-opt { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin-top: 14px; padding: 10px 14px;
   background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px; }
