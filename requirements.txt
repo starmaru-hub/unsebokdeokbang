@@ -1,0 +1,7 @@
+fastapi>=0.110
+uvicorn>=0.29
+pydantic>=2
+korean_lunar_calendar>=0.3
+tzdata
+# 절기표 재생성할 때만 필요
+# ephem>=4.1

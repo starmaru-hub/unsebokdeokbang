@@ -1,0 +1,12 @@
+# 파이썬
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 원천 자료(대용량, 다시 받을 수 있음) — scripts/build_hanja_db.py 참고
+data/raw/
+
+# 작업용 임시 파일
+.playwright-mcp/
+parity_cases.json
+*.log

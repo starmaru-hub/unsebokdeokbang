@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>운세복덕방 · 무료 작명 · 사주풀이 · 궁합</title>
+<meta property="og:title" content="운세복덕방 · 무료 작명 · 사주풀이 · 궁합">
+<meta property="og:site_name" content="운세복덕방">
+<meta property="og:image" content="img/logo.png">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta name="description" content="운세복덕방 — 생년월일시로 사주를 세우고, 용신 오행·81수리·발음오행·음양을 따져 대법원 인명용 한자로 이름을 지어 드립니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=29">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="./">
+      <img class="logo" src="img/logo.png" alt="운세복덕방 로고" width="42" height="42">
+      <span class="brand-t"><b>운세복덕방</b><small>四柱 命理 作名</small></span>
+    </a>
+    <nav class="tabs" role="tablist">
+      <div class="tab-group" aria-label="작명">
+        <span class="tg-label">作名</span>
+        <button class="tab on" data-tab="naming">이름 짓기</button>
+        <button class="tab" data-tab="evaluate">이름 감정</button>
+        <button class="tab" data-tab="dict">인명용 한자</button>
+      </div>
+      <span class="tab-sep" aria-hidden="true"></span>
+      <div class="tab-group" aria-label="사주">
+        <span class="tg-label">四柱</span>
+        <button class="tab" data-tab="saju">사주 풀이</button>
+        <button class="tab" data-tab="couple">궁합</button>
+        <button class="tab" data-tab="biz">기업 사주</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-mark" aria-hidden="true">福</div>
+  <div class="wrap hero-in">
+    <p class="eyebrow" id="heroEyebrow">四柱八字 · 用神 · 姓名學</p>
+    <h1 id="heroTitle">타고난 사주에 꼭 맞는<br><em>좋은 이름</em>을 지어 드립니다</h1>
+    <p class="hero-sub" id="heroSub">생년월일시와 출생지로 사주를 세우고, 부족한 기운을 채우는 한자를
+      대법원 인명용 한자 중에서 골라 자원오행 · 수리 · 발음오행 · 음양 네 가지 원리로 검증합니다.</p>
+    <ul class="stats" id="heroStats">
+      <li><b>9,088</b><span>대법원 인명용 한자</span></li>
+      <li><b>±수 초</b><span>천문 계산 절입 시각</span></li>
+      <li><b>4대 원리</b><span>자원·수리·발음·음양</span></li>
+      <li><b>무료</b><span>회원가입 없이 바로</span></li>
+    </ul>
+  </div>
+</section>
+
+<main class="wrap">
+  <ol class="steps" id="steps">
+    <li><i>一</i><b>출생 정보</b><span>양력·음력, 시각, 출생지</span></li>
+    <li><i>二</i><b>사주 · 용신 분석</b><span>만세력, 오행, 신강약</span></li>
+    <li><i>三</i><b>인명용 한자 선별</b><span>자원오행, 81수리</span></li>
+    <li><i>四</i><b>이름 추천</b><span>점수와 근거 제시</span></li>
+  </ol>
+
+  <section class="panel" id="birthCard">
+    <form id="birthForm" autocomplete="off">
+      <div class="fs">
+        <div class="fs-h"><span class="no">01</span><div><h2>기본 정보</h2><p id="fs1Desc">이름을 지을 분의 성씨와 성별</p></div></div>
+        <div class="grid">
+          <label class="only-saju hide name-wide">이름 <small>(성 포함 · 발음오행으로 풀이, 한자는 선택)</small>
+            <div class="row">
+              <input id="personName" class="name-in" maxlength="5" placeholder="홍길동">
+              <span id="nmPick" class="pick"><span class="hint">이름을 입력하면 글자별 한자를 고를 수 있습니다</span></span>
+            </div>
+          </label>
+          <label class="f-sur">성(姓)
+            <div class="row">
+              <input id="surKr" class="sur-in" maxlength="2" placeholder="김" required>
+              <select id="surHanja"><option value="">성을 입력하면 한자가 나옵니다</option></select>
+            </div>
+          </label>
+          <label>성별
+            <div class="seg" id="gender">
+              <button type="button" data-v="M" class="on">남자</button><button type="button" data-v="F">여자</button>
+            </div>
+          </label>
+        </div>
+        <div class="eval-only hide" id="evalInputs">
+          <label>감정할 이름
+            <div class="row">
+              <input id="evKr" class="sur-in" maxlength="2" placeholder="서윤">
+              <span id="evPick" class="pick"><span class="hint">이름을 입력하면 글자별 한자를 고를 수 있습니다</span></span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="fs only-saju hide">
+        <div class="fs-h"><span class="no">問</span><div><h2>궁금한 점 <span class="opt">선택</span></h2>
+          <p>가장 궁금한 내용을 적어 주시면 그 부분을 중점적으로 풀이해 드립니다</p></div></div>
+        <textarea id="question" maxlength="500" rows="3"
+          placeholder="예) 올해 이직해도 될까요?  /  언제 결혼하면 좋을까요?  /  2028년에 이사 가도 괜찮나요?  /  돈은 언제 모일까요?"></textarea>
+        <p class="note">재물 · 직장 · 연애·결혼 · 건강 · 시험 · 이사 · 자녀·가족 · 인간관계와 '올해·내년·2028년·언제' 같은 시기를 알아듣습니다.</p>
+      </div>
+
+      <div class="fs">
+        <div class="fs-h"><span class="no">02</span><div><h2>태어난 때와 곳</h2><p>시각을 알면 시주까지 정확히 세웁니다</p></div></div>
+        <div class="grid">
+          <label>달력
+            <div class="row">
+              <div class="seg" id="calendar">
+                <button type="button" data-v="solar" class="on">양력</button><button type="button" data-v="lunar">음력</button>
+              </div>
+              <span class="check hide" id="leapWrap"><input type="checkbox" id="leap"> 윤달</span>
+            </div>
+          </label>
+          <label>생년월일
+            <input type="date" id="bdate" required min="1900-01-01" max="2100-12-31">
+          </label>
+          <label class="f-time">태어난 시각
+            <div class="row">
+              <div class="seg" id="ampm">
+                <button type="button" data-v="am" class="on">오전</button><button type="button" data-v="pm">오후</button>
+              </div>
+              <select id="bhour"></select>
+              <select id="bmin"></select>
+            </div>
+            <span class="check"><input type="checkbox" id="noTime"> 태어난 시각을 모릅니다</span>
+          </label>
+          <label>출생지
+            <div class="combo">
+              <input id="regionQ" value="서울" placeholder="도시 이름 검색 (예: 부산, ㅂㅅ)" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="regionList">
+              <ul id="regionList" class="hide" role="listbox"></ul>
+            </div>
+            <input type="hidden" id="region" value="서울">
+            <small class="note">출생지 경도로 실제 태양시를 보정합니다</small>
+          </label>
+        </div>
+      </div>
+
+      <details class="fs adv">
+        <summary class="fs-h"><span class="no">03</span><div><h2>상세 옵션 <span class="opt">선택</span></h2><p>돌림자 · 원하는 이름 · 학설 선택</p></div></summary>
+        <div class="grid">
+          <label class="only-naming">돌림자(항렬자)
+            <div class="row">
+              <input id="fixSyl" maxlength="1" placeholder="한글">
+              <select id="fixPos"><option value="0">첫째 자</option><option value="1">둘째 자</option></select>
+              <input id="fixHanja" maxlength="1" placeholder="한자">
+            </div>
+          </label>
+          <label class="only-naming">원하는 한글 이름 <small>(쉼표로 구분, 비우면 자동)</small>
+            <input id="cands" placeholder="예: 서윤, 하린, 지안">
+          </label>
+          <label class="only-naming">한자 난이도
+            <select id="tier">
+              <option value="4">쉬운 한자만 (교육용 수준)</option>
+              <option value="2" selected>보통 (작명에 흔한 한자 포함)</option>
+              <option value="1">폭넓게</option>
+              <option value="0">인명용 한자 전체</option>
+            </select>
+          </label>
+          <label>발음오행 학설
+            <select id="school">
+              <option value="modern">현대 작명 다수설 (ㅇㅎ=土, ㅁㅂㅍ=水)</option>
+              <option value="hunmin">훈민정음 해례본 (ㅇㅎ=水, ㅁㅂㅍ=土)</option>
+            </select>
+          </label>
+          <label>자시(23~01시) 처리
+            <select id="zi">
+              <option value="jojasi">23시부터 다음날로 (정자시)</option>
+              <option value="yajasi">야자시 적용 (24시에 날짜 변경)</option>
+            </select>
+          </label>
+          <div class="checks">
+            <label class="check"><input type="checkbox" id="eot"> 진태양시(균시차) 보정</label>
+            <label class="check only-naming"><input type="checkbox" id="softBad"> 전통 불용문자 제외</label>
+            <label class="check only-naming"><input type="checkbox" id="single"> 외자 이름</label>
+            <label class="check only-parents"><input type="checkbox" id="useParents"> 부모 사주 함께 반영 (아기 이름)</label>
+          </div>
+        </div>
+      </details>
+
+      <div class="fs hide" id="parentsBox">
+        <div class="fs-h"><span class="no">04</span><div><h2>부모 사주 <span class="opt">선택</span></h2>
+          <p>아기 이름의 한자가 부모님의 용신까지 함께 채우는지 '부모 조화'(10점)를 더해 작명·감정합니다. 한 분만 입력해도 됩니다.</p></div></div>
+        <div class="duo" id="parentCols"></div>
+      </div>
+
+      <div class="submit-row">
+        <button class="primary" id="submitBtn" type="submit">이름 짓기</button>
+        <p class="err" id="err" role="alert"></p>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel hide" id="duoCard">
+    <form id="duoForm" autocomplete="off">
+      <div class="duo" id="duoCols"></div>
+      <div class="submit-row">
+        <button class="primary" id="duoBtn" type="submit">궁합 보기</button>
+        <p class="err" id="duoErr" role="alert"></p>
+      </div>
+    </form>
+  </section>
+
+  <div id="out"></div>
+
+  <section class="panel hide" id="dictCard">
+    <div class="fs-h"><span class="no">字</span><div><h2>대법원 인명용 한자 찾기</h2><p>음(예: 민) 또는 한자로 검색하면 원획·자원오행·급수를 보여 드립니다</p></div></div>
+    <div class="row search"><input id="dictQ" placeholder="음 또는 한자 입력"><button class="primary sm" id="dictBtn" type="button">검색</button></div>
+    <div id="dictOut" class="dict"></div>
+  </section>
+
+  <!-- 하단 원리 소개: 메뉴(data-modes)별로 하나만 보임 -->
+  <section class="method hide" data-modes="saju">
+    <p class="eyebrow dark">命理 解說 原理</p>
+    <h2 class="sec-t">이렇게 사주를 풀이합니다</h2>
+    <div class="m-grid m5">
+      <article><i class="e-水">萬</i><h3>만세력 · 사주 세우기</h3><p>태양의 위치를 천문 계산해 절기가 바뀌는 시각을 구하고, 출생지 경도·서머타임·표준시 변경까지 보정해 년·월·일·시 네 기둥(여덟 글자)을 세웁니다.</p></article>
+      <article><i class="e-木">五</i><h3>오행과 십신 분석</h3><p>여덟 글자와 지장간에 담긴 목·화·토·금·수의 세기를 재고, 나(일간)를 기준으로 비겁·식상·재성·관성·인성 십신의 강약을 살핍니다.</p></article>
+      <article><i class="e-火">用</i><h3>신강약과 용신</h3><p>일간의 힘이 강한지 약한지 판단하고(억부), 계절의 차고 더움(조후)을 함께 따져 다섯 오행에 용신·희신·한신·구신·기신 역할을 정합니다.</p></article>
+      <article><i class="e-土">解</i><h3>분야별 풀이</h3><p>십신의 배치, 신살(문창·도화·역마·화개), 배우자궁의 합·충을 근거로 성격·재물·학업·연애·건강·직업을 항목별 점수와 함께 풀이합니다.</p></article>
+      <article><i class="e-金">運</i><h3>대운과 세운</h3><p>10년마다 바뀌는 대운과 해마다 오는 세운이 원국과 만날 때의 십신·오행·합충·12운성·삼재를 보고 시기별 흐름을 짚어 드립니다.</p></article>
+    </div>
+  </section>
+
+  <section class="method hide" data-modes="couple">
+    <p class="eyebrow dark">宮合 原理</p>
+    <h2 class="sec-t">다섯 가지로 궁합을 봅니다</h2>
+    <div class="m-grid m5">
+      <article><i class="e-木">性</i><h3>성격 궁합 <small>25%</small></h3><p>두 사람의 일간(나를 뜻하는 글자)이 천간합·상생·같은 오행·상극 중 어떤 관계인지로 서로 끌리는 정도와 주도권을 봅니다.</p></article>
+      <article><i class="e-火">情</i><h3>애정·생활 궁합 <small>25%</small></h3><p>배우자 자리인 일지끼리 육합·삼합을 이루는지, 충·원진으로 부딪히는지 보고 집안 환경(월지)의 합충도 함께 살핍니다.</p></article>
+      <article><i class="e-水">補</i><h3>오행 보완 <small>20%</small></h3><p>상대의 사주가 내게 필요한 용신·희신 기운을 얼마나 채워 주는지, 두 사주를 합쳤을 때 오행이 고르게 갖춰지는지 계산합니다.</p></article>
+      <article><i class="e-土">緣</i><h3>배우자 인연 <small>15%</small></h3><p>남자는 재성, 여자는 관성이 배우자 별입니다. 상대의 일간이 바로 나의 배우자 별에 해당하는지 확인합니다.</p></article>
+      <article><i class="e-金">支</i><h3>띠 궁합 · 올해 운 <small>15%</small></h3><p>태어난 해의 지지(띠)가 삼합·육합인지 충·원진인지 보고, 올해 두 사람의 운 흐름을 비교해 함께할 계획의 시기를 조언합니다.</p></article>
+    </div>
+  </section>
+
+  <section class="method hide" data-modes="biz">
+    <p class="eyebrow dark">企業 四柱 原理</p>
+    <h2 class="sec-t">대표자와 회사를 함께 봅니다</h2>
+    <div class="m-grid m5">
+      <article><i class="e-金">社</i><h3>회사 사주 세우기</h3><p>법인 사업자등록증 발급 일시를 회사가 태어난 때로 보고 회사의 사주를 세워, 회사의 기질과 중심 기운(창의형·영업형·조직형 등)을 봅니다.</p></article>
+      <article><i class="e-土">財</i><h3>회사 재물운 <small>30%</small></h3><p>회사 사주의 재성·식상·비겁 강약으로 매출이 붙는 구조, 확장 속도, 동업·지분 문제를 살핍니다.</p></article>
+      <article><i class="e-火">合</i><h3>대표자·회사 궁합 <small>35%</small></h3><p>대표자와 회사의 일간 관계, 회사가 대표자의 용신을 채워 주는지, 두 일지의 합충으로 회사가 대표에게 득이 되는지 봅니다.</p></article>
+      <article><i class="e-木">業</i><h3>업종 · 상호 오행 <small>35%</small></h3><p>대표자와 회사의 용신 오행으로 잘 맞는 업종을 고르고, 회사 이름(상호)의 발음오행이 두 사주에 맞는지 검토합니다.</p></article>
+      <article><i class="e-水">歲</i><h3>연도별 회사 운</h3><p>앞으로 5년의 세운을 회사 사주(60%)와 대표자 사주(40%)에 함께 대입해 확장·투자·계약에 좋은 해와 조심할 해를 알려 드립니다.</p></article>
+    </div>
+  </section>
+
+  <section class="method" data-modes="naming evaluate dict">
+    <p class="eyebrow dark">作名 原理</p>
+    <h2 class="sec-t">네 가지 원리로 검증합니다</h2>
+    <div class="m-grid">
+      <article><i class="e-木">字</i><h3>자원오행 <small>30점</small></h3><p>한자가 지닌 오행이 사주의 용신·희신을 채우는지 봅니다. 이름이 사주의 부족한 기운을 보완하는 핵심입니다.</p></article>
+      <article><i class="e-火">數</i><h3>81수리 <small>30점</small></h3><p>원획법으로 센 획수로 원·형·이·정 4격을 세워 초년부터 말년까지의 운을 81수리 길흉으로 판단합니다.</p></article>
+      <article><i class="e-水">音</i><h3>발음오행 <small>15점</small></h3><p>성과 이름의 첫소리 오행이 상생으로 이어지는지 봅니다. 학설에 따라 두 기준 중 선택할 수 있습니다.</p></article>
+      <article><i class="e-土">陰陽</i><h3>음양 조화 <small>10점</small></h3><p>획수의 홀(양)·짝(음)이 한쪽으로 치우치지 않고 고르게 섞였는지 확인합니다.</p></article>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div class="brand"><img class="logo" src="img/logo.png" alt="운세복덕방 로고" width="42" height="42"><span class="brand-t"><b>운세복덕방</b><small>四柱 命理 作名</small></span></div>
+    <p>만세력은 태양 황경을 천문 계산해 절입 시각을 구하며(한국천문연구원 발표와 수 초 이내), 출생지 경도 · 서머타임 · 표준시 변경을 반영합니다.
+      한자는 대법원 인명용 한자표 기준입니다. 성명학은 학파마다 기준이 다르므로 참고 자료로 활용해 주세요.</p>
+  </div>
+</footer>
+
+<template id="tplLoading">
+  <section class="panel loading">
+    <div class="ink"><span></span><span></span><span></span></div>
+    <p><b>사주를 세우는 중입니다</b><br>만세력 계산 → 오행 분석 → 인명용 한자 선별</p>
+  </section>
+</template>
+<script>
+  // 계산 엔진(서버 없이 브라우저에서 동작): js/engine/api.js
+  window.engineReady = import("./js/engine/api.js?v=1");
+</script>
+<script src="config.js?v=4"></script>
+<script src="report.js?v=17"></script>
+<script src="app.js?v=28"></script>
+<script src="duo.js?v=9"></script>
+<script src="donate.js?v=1"></script>
+</body>
+</html>
