@@ -378,7 +378,10 @@ table.nm-oh td small { display: block; font-size: 10px; color: var(--faint); }
   font-size: 13.5px; color: var(--sub); text-align: center; }
 .quota-note em { font-style: normal; color: var(--accent); font-weight: 700; }
 .quota-note b { display: block; color: var(--ink); font: 700 15px var(--serif); margin-bottom: 4px; }
-.quota-note .btn-doc { width: auto; padding: 0 18px; margin: 10px auto 0; display: flex; }
+.quota-note .quota-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px; }
+.quota-note .btn-doc { width: auto; padding: 0 18px; margin: 0; display: flex; }
+.quota-note .quota-donate { background: var(--accent); color: #fff; border-color: var(--accent); }
+.quota-note.thanks { border-color: var(--accent); }
 
 /* 불용한자 */
 .bad-opt { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin-top: 14px; padding: 10px 14px;

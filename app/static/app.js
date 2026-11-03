@@ -267,34 +267,65 @@ const store = {
   get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* 저장 불가(시크릿 창 등) */ } },
 };
+/* 커피 후원 1회 더: 후원 페이지를 열면 그날 묶음마다 1회를 더 연다.
+   후원 여부를 확인할 수 없으므로 감사 선물(양심) 방식이며, 묶음별 하루 1번까지만. */
 const Quota = {
   last(m) { const g = groupOf(m); const r = g && store.get(`unse.quota.${g}`); return r && r.date === today() ? r : null; },
+  bonus(m) { const g = groupOf(m); const b = g && store.get(`unse.bonus.${g}`); return b && b.date === today() ? b : null; },
+  /** 오늘 쓸 수 있는 횟수를 다 썼는가 */
+  spent(m) { const b = this.bonus(m); return !!this.last(m) && !(b && !b.used); },
   /** 오늘 이미 썼으면 안내를 띄우고 true */
   blocked(m) {
-    if (!this.last(m)) return false;
+    if (!this.spent(m)) return false;
     this.note();
     const g = QUOTA_GROUPS[groupOf(m)];
     const err = ["couple", "biz"].includes(m) ? $("#duoErr") : $("#err");
     err.textContent = `${g.label}(${g.items})는 합쳐서 하루에 한 번만 이용할 수 있습니다. 내일 다시 이용해 주세요.`;
     return true;
   },
-  record(m, data) { const g = groupOf(m); if (g) store.set(`unse.quota.${g}`, { date: today(), mode: m, data }); this.note(); },
+  record(m, data) {
+    const g = groupOf(m);
+    if (!g) return;
+    const b = this.bonus(m);
+    if (this.last(m) && b && !b.used) store.set(`unse.bonus.${g}`, { ...b, used: true });
+    store.set(`unse.quota.${g}`, { date: today(), mode: m, data });
+    this.note();
+  },
+  /** 후원 페이지를 열고 1회 더 열기 */
+  donate(m) {
+    const url = window.SITE && SITE.donate && SITE.donate.url;
+    if (url) window.open(url, "_blank", "noopener");
+    store.set(`unse.bonus.${groupOf(m)}`, { date: today(), used: false });
+    $("#err").textContent = ""; $("#duoErr").textContent = "";
+    this.note();
+  },
   /** 현재 메뉴의 폼 아래에 '오늘 이미 이용' 안내 */
   note() {
     for (const el of $$(".quota-note")) el.classList.add("hide");
     const last = this.last(mode);
     if (!last) return;
     const g = QUOTA_GROUPS[groupOf(mode)];
+    const b = this.bonus(mode);
     const el = ["couple", "biz"].includes(mode) ? $("#duoQuotaNote") : $("#quotaNote");
+    const lastLabel = MODE_LABEL[last.mode] || "";
     el.classList.remove("hide");
+    el.classList.toggle("thanks", !!(b && !b.used));
+    if (b && !b.used) {
+      el.innerHTML = `<b>☕ 후원해 주셔서 감사합니다!</b> 오늘 ${josa(g.items, "을", "를")} <em>1회 더</em> 이용하실 수 있어요. 위의 버튼을 눌러 진행해 주세요.`;
+      return;
+    }
+    const canDonate = !b && window.SITE && SITE.donate && SITE.donate.url;
     el.innerHTML = `<b>오늘의 ${g.label}를 이미 이용하셨습니다.</b> ${josa(g.items, "은", "는")} 합쳐서 하루에 한 번 무료로 이용할 수 있어요.
-      오늘은 <em>${MODE_LABEL[last.mode] || ""}</em>${josa(MODE_LABEL[last.mode] || "", "을", "를").slice(-1)} 이용하셨습니다. 내일 다시 찾아 주세요.
-      <button type="button" class="btn-doc quota-replay">오늘 결과 다시 보기</button>`;
+      오늘은 <em>${lastLabel}</em>${josa(lastLabel, "을", "를").slice(-1)} 이용하셨습니다.
+      ${canDonate ? "커피 한 잔 후원해 주시면 오늘 1회 더 보실 수 있어요." : "내일 다시 찾아 주세요."}
+      <span class="quota-btns">${canDonate ? `<button type="button" class="btn-doc quota-donate">☕ 커피 후원하고 1회 더 보기</button>` : ""}<button type="button" class="btn-doc quota-replay">오늘 결과 다시 보기</button></span>`;
+    const d = el.querySelector(".quota-donate");
+    if (d) d.onclick = () => this.donate(mode);
     el.querySelector(".quota-replay").onclick = () => {
-      const d = last.data;
-      if (!d) return;
-      if (d.type === "couple" || d.type === "business") window.showDuoResult(d);
-      else { render(d); setStep(4); }
+      const x = last.data;
+      if (!x) return;
+      if (x.type === "couple" || x.type === "business") window.showDuoResult(x);
+      else { render(x); setStep(4); }
       $("#out").scrollIntoView({ behavior: "smooth", block: "start" });
     };
   },
