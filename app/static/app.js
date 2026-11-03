@@ -251,38 +251,63 @@ function setStep(n) {
 }
 setStep(0);
 
-/* 하루 1회 제한 (이름 짓기 · 사주 풀이) — 서버가 없어 이 브라우저에 기록한다 */
-const QUOTA_MODES = { naming: "이름 짓기", saju: "사주 풀이" };
+/* 하루 1회 제한 — 서버가 없어 이 브라우저에 기록한다
+   · 작명 묶음: 이름 짓기 + 이름 감정 (합쳐서 하루 1회)
+   · 사주 묶음: 사주 풀이 + 궁합 + 기업 사주 (합쳐서 하루 1회) */
+const QUOTA_GROUPS = {
+  name: { label: "작명 서비스", items: "이름 짓기·이름 감정", modes: ["naming", "evaluate"] },
+  saju: { label: "사주 서비스", items: "사주 풀이·궁합·기업 사주", modes: ["saju", "couple", "biz"] },
+};
+const MODE_LABEL = { naming: "이름 짓기", evaluate: "이름 감정", saju: "사주 풀이", couple: "궁합", biz: "기업 사주" };
+/** 받침 따라 조사 고르기: josa("궁합","을","를") → "궁합을" */
+const josa = (w, a, b) => { const c = w.charCodeAt(w.length - 1) - 0xac00; return w + (c >= 0 && c <= 11171 && c % 28 ? a : b); };
+const groupOf = (m) => Object.keys(QUOTA_GROUPS).find((g) => QUOTA_GROUPS[g].modes.includes(m));
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* 저장 불가(시크릿 창 등) */ } },
 };
-const usedToday = (m) => (store.get(`unse.quota.${m}`) || {}).date === today();
-function showQuotaNote() {
-  const note = $("#quotaNote");
-  const used = QUOTA_MODES[mode] && usedToday(mode);
-  note.classList.toggle("hide", !used);
-  if (!used) return;
-  note.innerHTML = `<b>오늘의 ${QUOTA_MODES[mode]}를 이미 이용하셨습니다.</b> ${QUOTA_MODES[mode]}는 하루에 한 번 무료로 이용할 수 있어요. 내일 다시 찾아 주세요.
-    <button type="button" class="btn-doc" id="showLast">오늘 결과 다시 보기</button>`;
-  $("#showLast").onclick = () => {
-    const last = store.get(`unse.quota.${mode}`);
-    if (last && last.data) { render(last.data); setStep(4); $("#out").scrollIntoView({ behavior: "smooth", block: "start" }); }
-  };
-}
-$$(".tab").forEach((t) => t.addEventListener("click", showQuotaNote));
-showQuotaNote();
+const Quota = {
+  last(m) { const g = groupOf(m); const r = g && store.get(`unse.quota.${g}`); return r && r.date === today() ? r : null; },
+  /** 오늘 이미 썼으면 안내를 띄우고 true */
+  blocked(m) {
+    if (!this.last(m)) return false;
+    this.note();
+    const g = QUOTA_GROUPS[groupOf(m)];
+    const err = ["couple", "biz"].includes(m) ? $("#duoErr") : $("#err");
+    err.textContent = `${g.label}(${g.items})는 합쳐서 하루에 한 번만 이용할 수 있습니다. 내일 다시 이용해 주세요.`;
+    return true;
+  },
+  record(m, data) { const g = groupOf(m); if (g) store.set(`unse.quota.${g}`, { date: today(), mode: m, data }); this.note(); },
+  /** 현재 메뉴의 폼 아래에 '오늘 이미 이용' 안내 */
+  note() {
+    for (const el of $$(".quota-note")) el.classList.add("hide");
+    const last = this.last(mode);
+    if (!last) return;
+    const g = QUOTA_GROUPS[groupOf(mode)];
+    const el = ["couple", "biz"].includes(mode) ? $("#duoQuotaNote") : $("#quotaNote");
+    el.classList.remove("hide");
+    el.innerHTML = `<b>오늘의 ${g.label}를 이미 이용하셨습니다.</b> ${josa(g.items, "은", "는")} 합쳐서 하루에 한 번 무료로 이용할 수 있어요.
+      오늘은 <em>${MODE_LABEL[last.mode] || ""}</em>${josa(MODE_LABEL[last.mode] || "", "을", "를").slice(-1)} 이용하셨습니다. 내일 다시 찾아 주세요.
+      <button type="button" class="btn-doc quota-replay">오늘 결과 다시 보기</button>`;
+    el.querySelector(".quota-replay").onclick = () => {
+      const d = last.data;
+      if (!d) return;
+      if (d.type === "couple" || d.type === "business") window.showDuoResult(d);
+      else { render(d); setStep(4); }
+      $("#out").scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+  },
+};
+window.Quota = Quota;
+$$(".tab").forEach((t) => t.addEventListener("click", () => Quota.note()));
+Quota.note();
 
 $("#birthForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   $("#err").textContent = "";
   const out = $("#out");
-  if (QUOTA_MODES[mode] && usedToday(mode)) {
-    showQuotaNote();
-    $("#err").textContent = `${QUOTA_MODES[mode]}는 하루에 한 번만 이용할 수 있습니다. 내일 다시 이용해 주세요.`;
-    return;
-  }
+  if (Quota.blocked(mode)) return;
   try {
     const birth = birthPayload();
     out.innerHTML = $("#tplLoading").innerHTML;
@@ -303,7 +328,7 @@ $("#birthForm").addEventListener("submit", async (e) => {
     }
     render(data);
     setStep(4);
-    if (QUOTA_MODES[mode]) { store.set(`unse.quota.${mode}`, { date: today(), data }); showQuotaNote(); }
+    Quota.record(mode, data);
     out.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
     out.innerHTML = "";

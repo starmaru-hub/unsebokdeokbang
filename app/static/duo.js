@@ -160,6 +160,7 @@
     e.preventDefault();
     $("#duoErr").textContent = "";
     const out = $("#out");
+    if (window.Quota.blocked(duoMode)) return;
     try {
       let data;
       if (duoMode === "couple") {
@@ -179,12 +180,16 @@
       }
       duoData = data;
       out.innerHTML = renderDuo(data);
+      window.Quota.record(duoMode, data);
       out.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       out.innerHTML = "";
       $("#duoErr").textContent = err.message;
     }
   });
+
+  /* 오늘 결과 다시 보기용 */
+  window.showDuoResult = (d) => { duoData = d; $("#out").innerHTML = renderDuo(d); };
 
   $("#out").addEventListener("click", (e) => {
     if (e.target.closest("[data-doc='duo']") && duoData) openDuoReport(duoData);

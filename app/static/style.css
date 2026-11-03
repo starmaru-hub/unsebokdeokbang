@@ -376,6 +376,7 @@ table.nm-oh td small { display: block; font-size: 10px; color: var(--faint); }
 /* 하루 1회 안내 */
 .quota-note { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--paper-2); border: 1px solid var(--gold);
   font-size: 13.5px; color: var(--sub); text-align: center; }
+.quota-note em { font-style: normal; color: var(--accent); font-weight: 700; }
 .quota-note b { display: block; color: var(--ink); font: 700 15px var(--serif); margin-bottom: 4px; }
 .quota-note .btn-doc { width: auto; padding: 0 18px; margin: 10px auto 0; display: flex; }
 
