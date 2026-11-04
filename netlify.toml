@@ -1,0 +1,11 @@
+# Netlify 배포 설정 — 빌드 없이 app/static 폴더를 그대로 올린다
+# (엔진 검사는 GitHub Actions 가 main 푸시 때마다 계속 실행)
+[build]
+  publish = "app/static"
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
