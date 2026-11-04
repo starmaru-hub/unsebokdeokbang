@@ -209,12 +209,22 @@ const HERO = {
   biz: ["대표자와 회사가 만나는<br><em>기업 사주</em>", "대표자의 사주와 회사 설립일 사주를 함께 세워 회사의 성격, 재물운, 대표자와의 궁합, 업종, 상호 오행, 연도별 운을 풀어 드립니다."],
   dict: ["대법원 인명용 한자<br><em>9,088자</em> 사전", "음이나 한자로 찾으면 원획(작명 획수), 필획, 자원오행, 급수와 뜻을 함께 보여 드립니다."],
 };
+/* 히어로 오른쪽 그림 (art.js) — 바뀔 때 살짝 떠오르며 나타남 */
+function setHeroArt() {
+  const box = $("#heroArt");
+  if (!box || !window.heroArt) return;
+  box.classList.remove("show");
+  box.innerHTML = window.heroArt(mode);
+  requestAnimationFrame(() => requestAnimationFrame(() => box.classList.add("show")));
+}
+setHeroArt();
 $$(".tab").forEach((t) => t.addEventListener("click", () => {
   mode = t.dataset.tab;
   $$(".tab").forEach((x) => x.classList.toggle("on", x === t));
   $("#heroTitle").innerHTML = HERO[mode][0];
   $("#heroSub").textContent = HERO[mode][1];
   $("#heroEyebrow").textContent = HERO_EYEBROW[mode];
+  setHeroArt();
   $("#fs1Desc").textContent = { naming: "이름을 지을 분의 성씨와 성별", evaluate: "감정받을 분의 성씨·성별과 이름",
     saju: "풀이를 받을 분의 이름과 성별" }[mode] || "";
   if (HERO_STEPS[mode]) {
