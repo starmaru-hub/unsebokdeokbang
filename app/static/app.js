@@ -209,6 +209,17 @@ const HERO = {
   biz: ["대표자와 회사가 만나는<br><em>기업 사주</em>", "대표자의 사주와 회사 설립일 사주를 함께 세워 회사의 성격, 재물운, 대표자와의 궁합, 업종, 상호 오행, 연도별 운을 풀어 드립니다."],
   dict: ["대법원 인명용 한자<br><em>9,088자</em> 사전", "음이나 한자로 찾으면 원획(작명 획수), 필획, 자원오행, 급수와 뜻을 함께 보여 드립니다."],
 };
+/* 방문 통계: 메뉴 열기·결과 보기·후원 클릭을 GoatCounter 이벤트로 남긴다 (count.js 가 아직 안 떴으면 건너뜀) */
+const MENU_KO = { naming: "이름 짓기", evaluate: "이름 감정", dict: "인명용 한자", saju: "사주 풀이", couple: "궁합", biz: "기업 사주" };
+function track(path, title) {
+  try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path, title: title || path, event: true }); } catch { /* 통계 실패는 무시 */ }
+}
+window.track = track;
+document.addEventListener("click", (e) => {
+  const a = e.target.closest && e.target.closest('a[href*="fairy.hada.io"]');
+  if (a) track("후원-링크-클릭", "커피 후원 링크 클릭");
+});
+
 /* 히어로 오른쪽 그림 (art.js) — 바뀔 때 살짝 떠오르며 나타남 */
 function setHeroArt() {
   const box = $("#heroArt");
@@ -220,6 +231,7 @@ function setHeroArt() {
 setHeroArt();
 $$(".tab").forEach((t) => t.addEventListener("click", () => {
   mode = t.dataset.tab;
+  track(`메뉴-${MENU_KO[mode] || mode}`, `메뉴 열기: ${MENU_KO[mode] || mode}`);
   $$(".tab").forEach((x) => x.classList.toggle("on", x === t));
   $("#heroTitle").innerHTML = HERO[mode][0];
   $("#heroSub").textContent = HERO[mode][1];
@@ -287,6 +299,7 @@ const Quota = {
   /** 오늘 이미 썼으면 안내를 띄우고 true */
   blocked(m) {
     if (!this.spent(m)) return false;
+    track(`하루제한-${MENU_KO[m] || m}`, `하루 1회 제한에 막힘: ${MENU_KO[m] || m}`);
     this.note();
     const g = QUOTA_GROUPS[groupOf(m)];
     const err = ["couple", "biz"].includes(m) ? $("#duoErr") : $("#err");
@@ -296,6 +309,7 @@ const Quota = {
   record(m, data) {
     const g = groupOf(m);
     if (!g) return;
+    track(`결과-${MENU_KO[m] || m}`, `결과 보기: ${MENU_KO[m] || m}`);
     const b = this.bonus(m);
     if (this.last(m) && b && !b.used) store.set(`unse.bonus.${g}`, { ...b, used: true });
     store.set(`unse.quota.${g}`, { date: today(), mode: m, data });
@@ -303,6 +317,7 @@ const Quota = {
   },
   /** 후원 페이지를 열고 1회 더 열기 */
   donate(m) {
+    track("후원-1회더", "커피 후원하고 1회 더 보기");
     const url = window.SITE && SITE.donate && SITE.donate.url;
     if (url) window.open(url, "_blank", "noopener");
     store.set(`unse.bonus.${groupOf(m)}`, { date: today(), used: false });
